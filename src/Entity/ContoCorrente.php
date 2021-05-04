@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Utenti;
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 
@@ -39,11 +39,11 @@ class ContoCorrente
     private $stato;
 
     /**
-     * @var Utenti
+     * @var User
      *
-     * @ORM\ManyToOne(targetEntity="Utenti")
+     * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cf", referencedColumnName="cf")
+     * @ORM\JoinColumn(name="cf", referencedColumnName="cf")
      * })
      */
     private $cf;
@@ -77,12 +77,12 @@ class ContoCorrente
         return $this;
     }
 
-    public function getCf(): Utenti
+    public function getCf(): User
     {
         return $this->cf;
     }
 
-    public function setCf(?Utenti $cf): self
+    public function setCf(?User $cf): self
     {
         $this->cf = $cf;
 
