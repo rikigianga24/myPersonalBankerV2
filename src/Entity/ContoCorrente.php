@@ -9,7 +9,9 @@ use ApiPlatform\Core\Annotation\ApiResource;
 /**
  * ContoCorrente
  *
- * @ApiResource
+ * @ApiResource(
+ *      attributes={"security"="is_granted('ROLE_USER')"}
+ * )
  * @ORM\Table(name="conto_corrente", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_D443DF6CABD8EEF6", columns={"cf"})})
  * @ORM\Entity(repositoryClass="App\Repository\ContoCorrenteRepository")
  */
@@ -20,7 +22,6 @@ class ContoCorrente
      *
      * @ORM\Column(name="iban", type="string", length=255, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $iban;
 
@@ -51,6 +52,13 @@ class ContoCorrente
     public function getIban(): ?string
     {
         return $this->iban;
+    }
+
+    public function setIban(string $iban): self
+    {
+        $this->iban = $iban;
+
+        return $this;
     }
 
     public function getSaldo(): ?string

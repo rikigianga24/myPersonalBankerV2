@@ -15,7 +15,6 @@ class User implements UserInterface
     /**
      * @ORM\Column(name="cf", type="string", length=255, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $cf;
 
