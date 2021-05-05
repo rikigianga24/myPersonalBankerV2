@@ -22,15 +22,16 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
-          
-        main:
-            anonymous: true
             json_login:
                 check_path: /authentication
                 username_path: cf
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+          
+        main:
+            anonymous: true
+            lazy: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
