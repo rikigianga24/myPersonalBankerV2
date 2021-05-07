@@ -5,12 +5,20 @@ namespace App\Entity;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * ContoCorrente
  *
  * @ApiResource(
- *      attributes={"security"="is_granted('ROLE_USER')"}
+ * 
+ *      attributes={"security"="is_granted('ROLE_USER')"},
+ *      collectionOperations={
+ *         "get"={"security"="is_granted('ROLE_ADMIN')"}
+ *      },
+ *      itemOperations={
+ *          "get"={"security"="is_granted('ROLE_ADMIN') or object.getCf() == user"},
+ *      }
  * )
  * @ORM\Table(name="conto_corrente", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_D443DF6CABD8EEF6", columns={"cf"})})
  * @ORM\Entity(repositoryClass="App\Repository\ContoCorrenteRepository")
@@ -42,10 +50,8 @@ class ContoCorrente
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
+     * @ORM\OneToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="cf", referencedColumnName="cf")
-     * })
      */
     private $cf;
 

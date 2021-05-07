@@ -5,8 +5,17 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiProperty;
 
 /**
+ * @ApiResource(
+ * itemOperations={"get"},
+ * attributes={
+ *      "normalization_context"={"groups"={"read"}},
+ *      "denormalization_context"={"groups"={"write"}}
+ * })
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User implements UserInterface
@@ -15,6 +24,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(name="cf", type="string", length=255, nullable=false)
      * @ORM\Id
+     * @Groups({"read"})
      */
     private $cf;
 
@@ -33,6 +43,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="nome", type="string", length=255, nullable=false)
+     * @Groups({"read", "write"})
      */
     private $nome;
 
@@ -40,6 +51,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="cognome", type="string", length=255, nullable=false)
+     * @Groups({"read"})
      */
     private $cognome;
 
@@ -47,6 +59,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="cellulare", type="string", length=255, nullable=false)
+     * @Groups({"read"})
      */
     private $cellulare;
 
@@ -54,6 +67,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="via", type="string", length=255, nullable=false)
+     * @Groups({"read"})
      */
     private $via;
 
@@ -61,6 +75,7 @@ class User implements UserInterface
      * @var int
      *
      * @ORM\Column(name="civico", type="integer", nullable=false)
+     * @Groups({"read"})
      */
     private $civico;
 
@@ -68,16 +83,16 @@ class User implements UserInterface
      * @var int
      *
      * @ORM\Column(name="cap", type="integer", nullable=false)
+     * @Groups({"read"})
      */
     private $cap;
 
     /**
      * @var ContoCorrente
      *
-     * @ORM\ManyToOne(targetEntity="ContoCorrente")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="iban", referencedColumnName="iban")
-     * })
+     * @ORM\OneToOne(targetEntity="App\Entity\ContoCorrente")
+     * @Groups({"read"})
+     * @ORM\JoinColumn(name="iban", referencedColumnName="iban")
      */
     private $iban;
 
