@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <style>
+    .align-center{
+        margin: 0 auto;
+    }
+    </style>
+{% endblock %}
+{% block body %}
+<h3>Movimento bancario</h3>
+<div>
+<p>
+    Gentile Cliente,<br>
+    ti confermiamo che la transazione è andata a buon fine.
+</p>
+<p>
+    Se la transazione è avvenuta contro il suo consenso può verificare tramite l'ID riportato di seguito.
+    ID transazione: {{id}}
+</p>
+</div>
+<strong>Servizio Mail MyPersonalBanker</strong>
+{% endblock %}

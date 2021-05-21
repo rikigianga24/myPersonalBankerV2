@@ -3,15 +3,15 @@
 namespace App\Entity;
 
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * ContoCorrente
  *
  * @ApiResource(
- * 
  *      attributes={"security"="is_granted('ROLE_USER')"},
  *      collectionOperations={
  *         "get"={"security"="is_granted('ROLE_ADMIN')"}
@@ -54,6 +54,17 @@ class ContoCorrente
      * @ORM\JoinColumn(name="cf", referencedColumnName="cf")
      */
     private $cf;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Transazione::class, mappedBy="ibanMittente")
+     */
+    private $transaziones;
+
+
+    public function __construct()
+    {
+        $this->transaziones = new ArrayCollection();
+    }
 
     public function getIban(): ?string
     {
@@ -102,6 +113,37 @@ class ContoCorrente
 
         return $this;
     }
+
+    /**
+     * @return Collection|Transazione[]
+     */
+    public function getTransaziones(): Collection
+    {
+        return $this->transaziones;
+    }
+
+    public function addTransazione(Transazione $transazione): self
+    {
+        if (!$this->transaziones->contains($transazione)) {
+            $this->transaziones[] = $transazione;
+            $transazione->setIbanMittente($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransazione(Transazione $transazione): self
+    {
+        if ($this->transaziones->removeElement($transazione)) {
+            // set the owning side to null (unless already changed)
+            if ($transazione->getIbanMittente() === $this) {
+                $transazione->setIbanMittente(null);
+            }
+        }
+
+        return $this;
+    }
+
 
 
 }

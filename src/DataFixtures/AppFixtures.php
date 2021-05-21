@@ -6,6 +6,7 @@ use Doctrine\Persistence\ObjectManager;
 use App\Entity\ContoCorrente;
 use App\Entity\Transazione;
 use App\Entity\User;
+use DateTime;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
@@ -19,6 +20,11 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
+        $nomi=["Riccardo","Daniele","Chiara"];
+        $cognomi=["Giangani","Castiglia","Riccio"];
+        $via=["Verdi","Bella","Grande"];
+        $movimenti=["entrata","uscita"];
+        $emails=["riccardo.giangani@hotmail.com","daniele.castiglia@studenti.itisarezzo.it","ricciochiara44@gmail.com"];
         for($i=0;$i<3;$i++){
             $utente=new User();     
             $cf="";
@@ -31,13 +37,14 @@ class AppFixtures extends Fixture
             $cf=$cf.chr(64+rand(1,26));
             echo $cf."\n";
             $utente->setCf($cf);
-            $utente->setNome("Nome".rand(1,10));
-            $utente->setCognome("Cognome".rand(1,10));
+            $utente->setNome($nomi[$i]);
+            $utente->setCognome($cognomi[$i]);
             $utente->setCellulare(mt_rand(3470000000,3479999999));
             $utente->setCap(rand(52043,55000));
             $utente->setCivico(rand(00,99));
-            $utente->setVia("Via".rand(1,10));
+            $utente->setVia("Via ".$via[$i]);
             $password="abcd";
+            $utente->setEmail($emails[rand(0,1)]);
             $utente->setPassword($this->encoder->encodePassword($utente,$password));
            
             $contocorrente = new ContoCorrente();
@@ -50,11 +57,22 @@ class AppFixtures extends Fixture
             $contocorrente->setStato(true);
             $contocorrente->setCf($utente);
             $utente->setIban($contocorrente);
+            
             $manager->persist($utente);
             $manager->persist($contocorrente);
-            
-        }
 
+            for($c=0;$c<10;$c++){
+                $transazione= new Transazione();         
+                $transazione->setIbanMittente($contocorrente);
+                $transazione->setData(new DateTime());
+                $transazione->setImporto(mt_rand(100.00,500.00));
+                $transazione->setTipo(rand(1,5));
+                $transazione->setIbanDestinatario($iban_construct);
+                $transazione->setMovimento(rand(1,2));
+                $manager->persist($transazione);
+            }    
+        }
+        
         $manager->flush();
     }
 }
