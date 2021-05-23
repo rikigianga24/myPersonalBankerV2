@@ -15,6 +15,7 @@ use App\Repository\TransazioneRepository;
  *         "get"={"security"="is_granted('ROLE_USER')"},
  *         "post"={
  *              "method"="POST",
+ *              "controller"="TransazioneController::class"
  *              }
  *          },
  *      itemOperations={

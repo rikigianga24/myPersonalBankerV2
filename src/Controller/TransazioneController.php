@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Email;
+use App\Repository\ContoCorrenteRepository;
+use Doctrine\Migrations\Tools\TransactionHelper;
 
 class TransazioneController extends AbstractController
 {
@@ -55,5 +57,48 @@ class TransazioneController extends AbstractController
     */
     public function findByIbanLastTransaction(TransazioneRepository $rep,string $iban):Response{
         return new Response($rep->findLast($iban)[0]);
+    }
+    
+    /**
+    * @Route("api/transaziones") 
+    */
+    public function postTransazione(Request $request, ContoCorrenteRepository $cc):Response{
+            $data = json_decode($request->getContent(), true);
+            $iban_destinatario=["iban"=>$data["ibanDestinatario"]];
+            $destinatario=$cc->findOneBy($iban_destinatario);
+            if($destinatario!=null){
+                $mittente=$cc->findOneBy(["iban"=>$data["ibanMittente"]]);
+                $transazione=new Transazione();
+                $transazione->setIbanMittente($mittente);
+                $transazione->setImporto($data["importo"]);
+                $transazione->setIbanDestinatario($data["ibanDestinatario"]);
+                $date = new \DateTime(date('Y-m-d H:i:s'));
+                $transazione->setData($date);
+                $transazione->setTipo($data["tipo"]);
+                $transazione->setMovimento("Uscita");
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($transazione);
+                $em->flush();
+                if($data["movimento"]=="Uscita"){
+                    $mittente->setSaldo($mittente->getSaldo()-$data["importo"]);
+                    $em->persist($mittente);
+                    $em->flush();
+                    $destinatario->setSaldo($destinatario->getSaldo()+$data["importo"]);
+                    $em->persist($destinatario);
+                    $em->flush();
+                }else{
+                    $mittente->setSaldo($mittente->getSaldo()+$data["importo"]);
+                    $em->persist($mittente);
+                    $em->flush();
+                    $destinatario->setSaldo($destinatario->getSaldo()-$data["importo"]);
+                    $em->persist($destinatario);
+                    $em->flush();
+                }
+                return new Response("success");
+            }else{
+                return new Response("Iban non esistente");
+            }
+            
+        
     }
 }
