@@ -1,6 +1,8 @@
 <?php
 
 namespace App\DataFixtures;
+
+use App\Entity\CartaPrepagata;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\ContoCorrente;
@@ -25,7 +27,10 @@ class AppFixtures extends Fixture
         $via=["Verdi","Bella","Grande"];
         $movimenti=["entrata","uscita"];
         $emails=["riccardo.giangani@hotmail.com","daniele.castiglia@studenti.itisarezzo.it","ricciochiara44@gmail.com"];
+        $date_emissione=["2015-08-24 18:38:26","2017-01-1 11:38:26","2019-08-5 16:23:20"];
+        $tipocarta=["PayPal","PostePay","Hype","Revolut"];
         for($i=0;$i<3;$i++){
+            $carta=new CartaPrepagata();
             $utente=new User();     
             $cf="";
             for($j=0;$j<=6;$j++){
@@ -71,6 +76,15 @@ class AppFixtures extends Fixture
                 $transazione->setMovimento(rand(1,2));
                 $manager->persist($transazione);
             }    
+            $carta->setCf($utente);
+            $carta->setDataEmissione(new Datetime($date_emissione[$i]));
+            $carta->setDataScadenza(new DateTime("now + 5 years"));
+            $carta->setCodice(rand(1111111111111111,999999999999));
+            $carta->setCvv(rand(111,999));
+            $carta->setSaldo(mt_rand(1000.00,2000.00));
+            $carta->setTipo($tipocarta[$i]);
+            $manager->persist($carta);
+
         }
         
         $manager->flush();
