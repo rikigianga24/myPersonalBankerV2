@@ -53,6 +53,10 @@ Follow the steps below to install and run locally the web service.
    ```sh
    $php bin/console doctrine:fixtures:load
    ```
+* Generate keys using SSL
+    ```sh
+    php bin/console lexik:jwt:generate-keypair
+    ```
 * Now you can finally run the web service with the Symfony built-in web server:
   
   ```sh
